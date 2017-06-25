@@ -6,15 +6,16 @@ import pandas as pd
 # https://min-api.cryptocompare.com/data/pricemulti?fsyms=BTC,ETH,DASH&tsyms=USD
 
 # Celle la envoi des requetes toutes les 3 sec
- Il faut arriver à faire le tableau suivant ou taper dans un fichier ou l'on prend les x dernieres valeur
-def printit():
-  threading.Timer(3.0, printit).start()
-  f = urllib.request.urlopen("https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=BTC,USD,EUR")
-  print(f.read())
+# Il faut arriver a faire le tableau suivant ou taper dans un fichier ou l'on prend les x dernieres valeur
+if(False):
+	def printit():
+	  threading.Timer(3.0, printit).start()
+	  f = urllib.request.urlopen("https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=BTC,USD,EUR")
+	  print(f.read())
 
-account_sid = "AC59592f7f0fb983ee92bb4d0aacfec1e2"
-auth_token = "9bf81090628c3206b39c8648eac91e1a"
-client = Client(account_sid, auth_token)
+	account_sid = "AC59592f7f0fb983ee92bb4d0aacfec1e2"
+	auth_token = "9bf81090628c3206b39c8648eac91e1a"
+	client = Client(account_sid, auth_token)
 
 
 json_text = """
@@ -82,33 +83,41 @@ for i in range(0, len(df)-24):
 	closingPricesBTC = df['BTC'].iloc[1+i:22+i].mean()
 	emaBTC[i]= df['BTC'].iloc[23 + i]*k+closingPricesBTC*(1-k)
 
-print emaBTC
+#print emaBTC
 # on lance une alerte d'achat ou de vente en cas de pb
 result = np.array([["",'BTC','ETH','DASH'],
 						['Action',"","",""]])
 
 for i in range(1,len(lastValue)+1) :
-	if (fiveLastMean[1,i] < lastValue[i-1]):
+	print "---------------------------------------------------------"
+	print "fiveLastMean[1,i] : ", fiveLastMean[1,i]
+	print "lastValue[i-1] : ", lastValue[i-1]
+	if (float(fiveLastMean[1,i]) > float(lastValue[i-1])):
 		result[1,i]="buy" 
-	elif(fiveLastMean[1,i] > lastValue[i-1]):
+
+	elif(float(fiveLastMean[1,i]) < float(lastValue[i-1])):
 		result[1,i]="sell"
 
+print "fiveLastMean : "
 print(fiveLastMean)
+print "lastValue : "
 print(lastValue)
+print "result : "
 print result
 
-# il faut ajouter les parties qu'on échange : ex BTC -> ETH , donc peut-etre attendre
-# Envoi de texto
-message = client.api.account.messages.create(to="+33620050318",
-                                             from_="+33644601266",
-                                             body="Hello Bro comment ca va ? Je t'envoi ca depuis mon code python")
+if(False):
+	# il faut ajouter les parties qu'on echange : ex BTC -> ETH , donc peut-etre attendre
+	# Envoi de texto
+	message = client.api.account.messages.create(to="+33620050318",
+		                                         from_="+33644601266",
+		                                         body="Hello Bro comment ca va ? Je t'envoi ca depuis mon code python")
 
 
 
-# Connection a elasticsearch
-es = Elasticsearch(
-    hosts=['localhost'],
-    http_auth=('elastic', 'changeme'),
-    port=9200,
-    ca_certs=certifi.where()
-)
+	# Connection a elasticsearch
+	es = Elasticsearch(
+		hosts=['localhost'],
+		http_auth=('elastic', 'changeme'),
+		port=9200,
+		ca_certs=certifi.where()
+	)
