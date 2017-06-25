@@ -4,6 +4,19 @@ import pandas as pd
 
 # lire les donnees du fichier a chaque fois qu'il y a une nouvelle valeur et mettre les dernieres dans des tableaux 5,13 et la derniere dans lastValue
 # https://min-api.cryptocompare.com/data/pricemulti?fsyms=BTC,ETH,DASH&tsyms=USD
+
+# Celle la envoi des requetes toutes les 3 sec
+ Il faut arriver à faire le tableau suivant ou taper dans un fichier ou l'on prend les x dernieres valeur
+def printit():
+  threading.Timer(3.0, printit).start()
+  f = urllib.request.urlopen("https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=BTC,USD,EUR")
+  print(f.read())
+
+account_sid = "AC59592f7f0fb983ee92bb4d0aacfec1e2"
+auth_token = "9bf81090628c3206b39c8648eac91e1a"
+client = Client(account_sid, auth_token)
+
+
 json_text = """
 [
 {"BTC":{"USD":2167.85},"ETH":{"USD":167.88},"DASH":{"USD":102.31}},
@@ -83,3 +96,19 @@ for i in range(1,len(lastValue)+1) :
 print(fiveLastMean)
 print(lastValue)
 print result
+
+# il faut ajouter les parties qu'on échange : ex BTC -> ETH , donc peut-etre attendre
+# Envoi de texto
+message = client.api.account.messages.create(to="+33620050318",
+                                             from_="+33644601266",
+                                             body="Hello Bro comment ca va ? Je t'envoi ca depuis mon code python")
+
+
+
+# Connection a elasticsearch
+es = Elasticsearch(
+    hosts=['localhost'],
+    http_auth=('elastic', 'changeme'),
+    port=9200,
+    ca_certs=certifi.where()
+)
