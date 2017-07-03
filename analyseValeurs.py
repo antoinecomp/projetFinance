@@ -2,6 +2,9 @@ import json
 import numpy as np
 import pandas as pd
 
+toDo=[[0,"Ordre de vente que EMC et SMC d'accord"],[1,"annonces de crash/solde"]]
+print "TO DO :",toDo
+
 # lire les donnees du fichier a chaque fois qu'il y a une nouvelle valeur et mettre les dernieres dans des tableaux 5,13 et la derniere dans lastValue
 # https://min-api.cryptocompare.com/data/pricemulti?fsyms=BTC,ETH,DASH&tsyms=USD
 
@@ -85,32 +88,66 @@ for i in range(0, len(df)-24):
 
 #print emaBTC
 # on lance une alerte d'achat ou de vente en cas de pb
-result = np.array([["",'BTC','ETH','DASH'],
+results = np.array([["",'BTC','ETH','DASH'],
 						['Action',"","",""]])
 
 for i in range(1,len(lastValue)+1) :
-	print "---------------------------------------------------------"
-	print "fiveLastMean[1,i] : ", fiveLastMean[1,i]
-	print "lastValue[i-1] : ", lastValue[i-1]
 	if (float(fiveLastMean[1,i]) > float(lastValue[i-1])):
-		result[1,i]="buy" 
+		results[1,i]="sell" 
 
 	elif(float(fiveLastMean[1,i]) < float(lastValue[i-1])):
-		result[1,i]="sell"
+		results[1,i]="buy"
 
+print "---------------------------------------------------------"
 print "fiveLastMean : "
 print(fiveLastMean)
 print "lastValue : "
 print(lastValue)
 print "result : "
-print result
+print results
+buyExist = False
+sellExist = False
+print "---------------------------------------------------------"
+j=0
+k=0
 
+# Creer deux tableaux vides de string
+#buyValue = np.array(results.shape[0],dtype = S24)
+#sellValue = np.array(results.shape[0],dtype = S24)
+
+# il faudrait arriver a donner la meme taille des tableaux que le nombre max de possibilite
+# ou a l'agrandir en fonction de ce que l'on trouve
+buyValue =(len(results[1])-1)*[""]
+sellValue = (len(results[1])-1)*[""]
+
+# on parcourt la deuxieme ligne
+for i in range(1,len(results[1])):
+	if results[1][i] == "buy":
+		buyExist = True
+		# il me faut l'indice a acheter
+		buyValue[k] = results[0][i]
+		k=k+1
+	if results[1][i] == "sell":
+		sellExist = True
+		sellValue[j] = results[0][i]
+		j=j+1
+	#if ((sellExist != 0) and (buyExist !=0)):
+	#	break
+
+print "Vendre ",sellValue, " contre ",buyValue
+# on peut les ajouter d'une part et de l'autre
+# le prochain chantier est de mesurer lequel est le plus prometteur
+
+
+# Ensuite on va faire un systeme pour prevenir quand un cours s'est casse la gueule
 if(False):
 	# il faut ajouter les parties qu'on echange : ex BTC -> ETH , donc peut-etre attendre
 	# Envoi de texto
 	message = client.api.account.messages.create(to="+33620050318",
 		                                         from_="+33644601266",
-		                                         body="Hello Bro comment ca va ? Je t'envoi ca depuis mon code python")
+		                                         body="Vendre "
+												#,sellValue, " contre ",buyValue
+												)
 
 
 
