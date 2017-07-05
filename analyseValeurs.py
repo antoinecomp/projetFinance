@@ -63,10 +63,13 @@ lastValue = values[-1]
 df = pd.DataFrame(values, columns=['BTC', 'ETH', 'DASH'])
 
 # on calcule les moyennes sma, ema
-# SMA: 
-MeanBTC = df['BTC'].tail(5).mean()
-MeanETH = df['ETH'].tail(5).mean()
-MeanDASH = df['DASH'].tail(5).mean()
+# SMA:
+def calculateSMA(prices):
+	return prices.tail(5).mean()
+
+MeanBTC = calculateSMA(df['BTC'])
+MeanETH = calculateSMA(df['ETH'])
+MeanDASH = calculateSMA(df['DASH'])
 
 fiveLastMean = np.array([["",'BTC','ETH','DASH'],
 						['Mean',MeanBTC,MeanETH,MeanDASH]])
@@ -75,34 +78,62 @@ fiveLastMean = np.array([["",'BTC','ETH','DASH'],
 # EMA: {Close - EMA(previous day)} x multiplier + EMA(previous day).
 # I have to store those values
 # If I have the time I can manage it by indexing on it. 
-k = float(2)/(22+1)
-# we take the closing prices for the first 22 days
-# closingPricesBTC = df['BTC'].iloc[1:22].mean()
-closingPricesETH = df['ETH'].iloc[1:22].mean()
-closingPricesDASH = df['DASH'].iloc[1:22].mean()
-# taking the following day s (day 23) closing price multiplied by k, then multiply the previous day s moving average by (1-k) and add the two.
-emaBTC={}
-for i in range(0, len(df)-24):
-	closingPricesBTC = df['BTC'].iloc[1+i:22+i].mean()
-	emaBTC[i]= df['BTC'].iloc[23 + i]*k+closingPricesBTC*(1-k)
 
+# we take the closing prices for the first 22 days ## Why the first and not the last ?
+# closingPricesBTC = df['BTC'].iloc[1:22].mean()
+closingPricesETH = df['ETH'].iloc[-1:22].mean()
+closingPricesDASH = df['DASH'].iloc[-1:22].mean()
+# taking the following day s (day 23) closing price multiplied by k, then multiply the previous day s moving average by (1-k) and add the two.
+
+def calculateEMA(todayPrice,numberOfDays,EMAYesterday):
+	k = float(2)/(numberOfDays+1)
+	return todayPrice * k + EMAYesterday *(1-k)
+
+def calculateAllEMA(df):
+	ema=[]
+	for i in range(0, len(df)-24):
+		EMAYesterday = df.iloc[1+i:22+i].mean()
+		k = float(2)/(22+1)
+		# print(str(i)+" "+str(len(ema)))
+		ema.append(df.iloc[23 + i]*k+EMAYesterday*(1-k))
+	return ema[-1]
+
+MeanExpBTC = calculateAllEMA(df['BTC'])
+MeanExpETH = calculateAllEMA(df['ETH'])
+MeanExpDASH = calculateAllEMA(df['DASH'])
+
+MeanExp = np.array([["",'BTC','ETH','DASH'],
+						['Mean',MeanExpBTC,MeanExpETH,MeanExpDASH]])
+
+#print "emaBTC : "
 #print emaBTC
+#print emaBTC["ETH"]
+
 # on lance une alerte d'achat ou de vente en cas de pb
 results = np.array([["",'BTC','ETH','DASH'],
 						['Action',"","",""]])
 
 for i in range(1,len(lastValue)+1) :
-	if (float(fiveLastMean[1,i]) > float(lastValue[i-1])):
+	if ((float(fiveLastMean[1,i]) and MeanExp[1,i]) > (float(lastValue[i-1]))):
+		print "(fiveLastMean[1,i]) : ",float(fiveLastMean[1,i])
+		print "MeanExp[1,i] : ",MeanExp[1,i]
+		print "***"
+		print "(float(lastValue[i-1]))", (float(lastValue[i-1]))
+		print "sell",fiveLastMean[0,i]
 		results[1,i]="sell" 
 
-	elif(float(fiveLastMean[1,i]) < float(lastValue[i-1])):
+	elif((float(fiveLastMean[1,i]) and MeanExp[1,i])< (float(lastValue[i-1]))):
+		print "fuck!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 		results[1,i]="buy"
 
 print "---------------------------------------------------------"
-print "fiveLastMean : "
-print(fiveLastMean)
 print "lastValue : "
 print(lastValue)
+print "fiveLastMean : "
+print(fiveLastMean)
+print "MeanExp : "
+print(MeanExp)
+print "----------"
 print "result : "
 print results
 buyExist = False
@@ -112,11 +143,7 @@ j=0
 k=0
 
 # Creer deux tableaux vides de string
-#buyValue = np.array(results.shape[0],dtype = S24)
-#sellValue = np.array(results.shape[0],dtype = S24)
 
-# il faudrait arriver a donner la meme taille des tableaux que le nombre max de possibilite
-# ou a l'agrandir en fonction de ce que l'on trouve
 buyValue =(len(results[1])-1)*[""]
 sellValue = (len(results[1])-1)*[""]
 
@@ -135,7 +162,7 @@ for i in range(1,len(results[1])):
 	#	break
 
 print "Vendre ",sellValue, " contre ",buyValue
-# on peut les ajouter d'une part et de l'autre
+
 # le prochain chantier est de mesurer lequel est le plus prometteur
 
 
