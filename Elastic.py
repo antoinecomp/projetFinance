@@ -17,10 +17,7 @@ class Elastic:
 		self.es = Elasticsearch(hosts=hosts,http_auth=(usr,password),port=port,ca_certs=certifi.where())
 		print(self.es)
 		
-	def store(self,assets,call):
-		threading.Timer(0.5, self.store,[assets,call]).start()
-		f = urllib.request.urlopen(call)
-		value = f.read()
-		res = self.es.index(index="finance", doc_type=assets, body=value)
 
-		print(value)
+	def store(self,assets,value):
+		res = self.es.index(index="finance", doc_type=assets, body=value)
+		return value
