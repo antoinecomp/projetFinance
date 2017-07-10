@@ -2,7 +2,7 @@ import json
 import numpy as np
 import pandas as pd
 
-toDo=[[0,"Ordre de vente que EMC et SMC d'accord"],[1,"annonces de crash/solde"]]
+toDo=[[0,"annonces de crash/solde"]]
 print "TO DO :",toDo
 
 # lire les donnees du fichier a chaque fois qu'il y a une nouvelle valeur et mettre les dernieres dans des tableaux 5,13 et la derniere dans lastValue
@@ -55,7 +55,10 @@ json_text = """
 
 a = json.loads(json_text)
 
+# je recupere les valeurs du texte
 values = [(each["BTC"].get("USD"), each["ETH"].get("USD"), each["DASH"].get("USD")) for each in a]
+
+print "each : ", each
 
 fiveLast = np.array(values[-5:])
 lastValue = values[-1]
@@ -114,17 +117,20 @@ results = np.array([["",'BTC','ETH','DASH'],
 						['Action',"","",""]])
 
 for i in range(1,len(lastValue)+1) :
-	if ((float(fiveLastMean[1,i]) and MeanExp[1,i]) > (float(lastValue[i-1]))):
-		print "(fiveLastMean[1,i]) : ",float(fiveLastMean[1,i])
-		print "MeanExp[1,i] : ",MeanExp[1,i]
-		print "***"
-		print "(float(lastValue[i-1]))", (float(lastValue[i-1]))
-		print "sell",fiveLastMean[0,i]
-		results[1,i]="sell" 
-
-	elif((float(fiveLastMean[1,i]) and MeanExp[1,i])< (float(lastValue[i-1]))):
-		print "fuck!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-		results[1,i]="buy"
+	if ((float(fiveLastMean[1,i]) > (float(lastValue[i-1]))) and (float (MeanExp[1,i]) >float(lastValue[i-1]))):
+		# On dirait que and ne marche pas
+	#if (float(fiveLastMean[1,i]) > float(lastValue[i-1])):
+	#	if (float (MeanExp[1,i]) >float(lastValue[i-1])):
+			print "(fiveLastMean[1,i]) : ",float(fiveLastMean[1,i])
+			print "MeanExp[1,i] : ",MeanExp[1,i]
+			print "***"
+			print "(float(lastValue[i-1]))", (float(lastValue[i-1]))
+			print "sell",fiveLastMean[0,i]
+			results[1,i]="sell"
+	elif((float(fiveLastMean[1,i])< (float(lastValue[i-1]))) and (float (MeanExp[1,i])< float(lastValue[i-1]))):
+	#if(float(fiveLastMean[1,i])< float(lastValue[i-1])):
+	#	if(MeanExp[1,i]< float(lastValue[i-1])):
+			results[1,i]="buy"
 
 print "---------------------------------------------------------"
 print "lastValue : "
