@@ -12,8 +12,8 @@ prices=[]
 newAnalyse = ValueAnalyse(prices)
 arrayAction = newAnalyse.actionDecision()
 
-print "There has been some changes, you can do :"
-print arrayAction
+print ("There has been some changes, you can do :")
+print (arrayAction)
 
 
 # a quoi ser ut = Util() ?
