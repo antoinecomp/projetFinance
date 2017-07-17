@@ -8,9 +8,10 @@ class Util:
 	def __init__(self):
 		pass
 	def disp(self,el,call,prices,assets):
-		#threading.Timer(1, self.disp,[el,call,prices,assets]).start()
-		#value = urllib.request.urlopen(call).read()
-		#prices.append(value)
+		threading.Timer(1, self.disp,[el,call,prices,assets]).start()
+		value = urllib.request.urlopen(call).read()
+		prices.append(value)
+
 		#print(len(prices))
 		#print("prices : ")
 		#print(type(prices))
@@ -18,20 +19,23 @@ class Util:
 		#print(a)
 
 		# test
-		
-		json_text = """
-		[
-		{"BTC":{"USD":2167.85},"ETH":{"USD":167.88},"DASH":{"USD":102.31}},
-		{"BTC":{"USD":2253.12},"ETH":{"USD":177.76},"DASH":{"USD":109.17}},
-		{"BTC":{"USD":2251.47},"ETH":{"USD":177.71},"DASH":{"USD":109.12}},
-		{"BTC":{"USD":2251.47},"ETH":{"USD":177.71},"DASH":{"USD":109.12}},
-		{"BTC":{"USD":2251.47},"ETH":{"USD":177.71},"DASH":{"USD":109.12}},
-		{"BTC":{"USD":2167.85},"ETH":{"USD":167.88},"DASH":{"USD":102.31}}
-		]
-		"""
-		a = json.loads(json_text)
+		if(False):
+			json_text = """
+			[
+			{"BTC":{"USD":2167.85},"ETH":{"USD":167.88},"DASH":{"USD":102.31}},
+			{"BTC":{"USD":2253.12},"ETH":{"USD":177.76},"DASH":{"USD":109.17}},
+			{"BTC":{"USD":2251.47},"ETH":{"USD":177.71},"DASH":{"USD":109.12}},
+			{"BTC":{"USD":2251.47},"ETH":{"USD":177.71},"DASH":{"USD":109.12}},
+			{"BTC":{"USD":2251.47},"ETH":{"USD":177.71},"DASH":{"USD":109.12}},
+			{"BTC":{"USD":2167.85},"ETH":{"USD":167.88},"DASH":{"USD":102.31}}
+			]
+			"""
+			a = json.loads(json_text)
+
+		json_text = "[" + ','.join([e.decode("utf-8") for e in prices]) + ']'
+		#a = json.loads(json_text)
 		#
-		va = ValueAnalyse(a)
+		va = ValueAnalyse(json_text)
 
 		results_array = va.actionDecision()
 		buyValue =(len(results[1])-1)*[""]
