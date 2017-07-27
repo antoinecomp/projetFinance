@@ -17,6 +17,10 @@ class ValueAnalyse:
 			self.bol = True
 			mean_exp = calculateAllEMA(self.values)
 		self.last_mean = calculateSMA(self.values)
+
+		self.fiveLast = np.array(self.values[-5:])
+		self.lastValue = self.values[-1]
+
 		
 
 
@@ -48,8 +52,8 @@ class ValueAnalyse:
 	def actionDecision(self):
 		results = np.array([["",'BTC','ETH','DASH'],
 						['Action',"","",""]])
-		for i in range(1,len(lastValue)+1) :
-			if ((float(fiveLastMean[1,i]) > (float(lastValue[i-1]))) and (float (MeanExp[1,i]) >float(lastValue[i-1]))):
+		for i in range(1,len(self.lastValue)+1) :
+			if ((float(fiveLastMean[1,i]) > (float(self.lastValue[i-1]))) and (float (MeanExp[1,i]) >float(self.lastValue[i-1]))):
 					results[1,i]="sell"
-			elif((float(fiveLastMean[1,i])< (float(lastValue[i-1]))) and (float (MeanExp[1,i])< float(lastValue[i-1]))):
+			elif((float(fiveLastMean[1,i])< (float(self.lastValue[i-1]))) and (float (MeanExp[1,i])< float(self.lastValue[i-1]))):
 					results[1,i]="buy"

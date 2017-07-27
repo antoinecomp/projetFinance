@@ -1,4 +1,5 @@
 import threading
+import numpy as np
 from Elastic import Elastic
 import urllib.request
 from ValueAnalyse import ValueAnalyse
@@ -34,7 +35,8 @@ class Util:
 
 		json_text = "[" + ','.join([e.decode("utf-8") for e in prices]) + ']'
 		#a = json.loads(json_text)
-		#
+
+
 		va = ValueAnalyse(json_text)
 
 		results_array = va.actionDecision()
