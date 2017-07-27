@@ -11,15 +11,16 @@ class ValueAnalyse:
 		self.bol=False
 		print ("json_text : ")
 		print (json_text)
-		return
+		self.mean_exp =[]
 		self.values = [(each["BTC"].get("USD"), each["ETH"].get("USD"), each["DASH"].get("USD")) for each in json.loads(str(json_text))]
 		if(len(self.values)>=24):
 			self.bol = True
-			mean_exp = calculateAllEMA(self.values)
-		self.last_mean = calculateSMA(self.values)
+			self.mean_exp = self.calculateAllEMA(self.values)
+		self.last_mean = self.calculateSMA(self.values)
 
 		self.fiveLast = np.array(self.values[-5:])
-		self.lastValue = self.values[-1]
+		if self.values:
+			self.lastValue = self.values[-1]
 
 		
 
@@ -28,11 +29,11 @@ class ValueAnalyse:
 		df = pd.DataFrame(values_array, columns=['BTC', 'ETH', 'DASH'])		
 		last_mean = np.array([["",'BTC','ETH','DASH'],
 						['Mean',df['BTC'].tail(5).mean(),df['BTC'].tail(5).mean(),df['BTC'].tail(5).mean()]])
-		return last_mean_array
+		return last_mean
 
 	def calculateEMA(last_price,number_of_period,last_EMA):
 		k = float(2)/(number_of_period+1)
-		return last_price * k + last_price *(1-k)
+		return last_price * k + last_EMA *(1-k)
 
 	def calculateAllEMA(self,values_array):
 		df = pd.DataFrame(values_array, columns=['BTC', 'ETH', 'DASH'])
@@ -52,8 +53,14 @@ class ValueAnalyse:
 	def actionDecision(self):
 		results = np.array([["",'BTC','ETH','DASH'],
 						['Action',"","",""]])
-		for i in range(1,len(self.lastValue)+1) :
-			if ((float(fiveLastMean[1,i]) > (float(self.lastValue[i-1]))) and (float (MeanExp[1,i]) >float(self.lastValue[i-1]))):
+		for i in range(1,len(self.lastValue)) :
+			if self.mean_exp:
+				if ((float(np.mean(self.fiveLast[0,i])) > (float(self.lastValue[i-1]))) and (float (self.mean_exp[1,i]) >float(self.lastValue[i-1]))):
 					results[1,i]="sell"
-			elif((float(fiveLastMean[1,i])< (float(self.lastValue[i-1]))) and (float (MeanExp[1,i])< float(self.lastValue[i-1]))):
+				elif((float(self.fiveLast[1,i])< (float(self.lastValue[i-1]))) and (float(self.mean_exp[1,i])< float(self.lastValue[i-1]))):
 					results[1,i]="buy"
+		return results
+					
+					
+					
+#Moyenne exponentielle 

@@ -39,7 +39,7 @@ class Util:
 
 		va = ValueAnalyse(json_text)
 
-		results_array = va.actionDecision()
+		results = va.actionDecision()
 		buyValue =(len(results[1])-1)*[""]
 		sellValue = (len(results[1])-1)*[""]
 	
