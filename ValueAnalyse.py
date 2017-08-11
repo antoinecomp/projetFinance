@@ -9,8 +9,8 @@ class ValueAnalyse:
 		"""je recupere les valeurs du texte json"""	
 		# on pourrait l'ameliorer en "
 		self.bol=False
-		print ("json_text : ")
-		print (json_text)
+		#print ("json_text : ")
+		#print (json_text)
 		self.mean_exp =[]
 		self.values = [(each["BTC"].get("USD"), each["ETH"].get("USD"), each["DASH"].get("USD")) for each in json.loads(str(json_text))]
 		if(len(self.values)>=24):
@@ -40,13 +40,16 @@ class ValueAnalyse:
 		# pour le moment on ne fait le calcul que pour une valeur : BTC
 		# comment le faire pour chaque colonne de values_array
 		# dfb = df['BTC']
-		for i,column in enumerate(df[column]):
+		column_by_search = ["BTC", "ETH", "DASH"]
+		for i,column in enumerate(column_by_search):
 			ema=[]
+			print("column")
+			print(column)
 			for i in range(0, len(column)-24):
-				EMA_yesterday = column.iloc[1+i:22+i].mean()
+				EMA_yesterday = column.iloc[1+j:22+j].mean()
 				k = float(2)/(22+1)
-				ema.append(column.iloc[23 + i]*k+EMA_yesterday*(1-k))
-			mean_exp[i] = ema[-1]
+				ema.append(column.iloc[23 + j]*k+EMA_yesterday*(1-k))
+			mean_exp[j] = ema[-1]
 		return mean_exp
 
 	# quand le declenche t on ? Des le constructeur ou dans un main qui fait des appels reguliers ?
@@ -54,7 +57,13 @@ class ValueAnalyse:
 		results = np.array([["",'BTC','ETH','DASH'],
 						['Action',"","",""]])
 		for i in range(1,len(self.lastValue)) :
+			#print("self.lastValue : ",self.lastValue)
 			if self.mean_exp:
+				print("self.mean_exp")
+				print("float(np.mean(self.fiveLast[0,i])) : ",float(np.mean(self.fiveLast[0,i])))
+				print("-------------")
+				print("moyenne : ", (float(np.mean(self.fiveLast[0,i]))))
+				print("moyenne exp : ",(float(self.mean_exp[1,i])))
 				if ((float(np.mean(self.fiveLast[0,i])) > (float(self.lastValue[i-1]))) and (float (self.mean_exp[1,i]) >float(self.lastValue[i-1]))):
 					results[1,i]="sell"
 				elif((float(self.fiveLast[1,i])< (float(self.lastValue[i-1]))) and (float(self.mean_exp[1,i])< float(self.lastValue[i-1]))):

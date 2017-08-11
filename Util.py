@@ -10,10 +10,13 @@ class Util:
 		pass
 	def disp(self,el,call,prices,assets):
 		threading.Timer(1, self.disp,[el,call,prices,assets]).start()
-		value = urllib.request.urlopen(call).read()
+		print("value length")
+		print(len(prices))
+		value = urllib.request.urlopen(call).read() # Ca daoit être à cause de ma connection internet mais ca donne rien
+
 		prices.append(value)
 
-		#print(len(prices))
+
 		#print("prices : ")
 		#print(type(prices))
 		#a = " ".join(str(x) for x in prices)

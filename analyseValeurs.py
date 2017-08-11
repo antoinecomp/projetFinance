@@ -116,6 +116,9 @@ MeanExp = np.array([["",'BTC','ETH','DASH'],
 results = np.array([["",'BTC','ETH','DASH'],
 						['Action',"","",""]])
 
+print "i: "
+for i in range(0,len(lastValue)+1):
+	print i
 for i in range(1,len(lastValue)+1) :
 	if ((float(fiveLastMean[1,i]) > (float(lastValue[i-1]))) and (float (MeanExp[1,i]) >float(lastValue[i-1]))):
 		# On dirait que and ne marche pas
