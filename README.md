@@ -33,6 +33,8 @@ Is a draft file to show what we would like.
 
 Is a file that contains the financial method we need to take the actions.
 
+exponential moving average is calculated from http://www.iexplain.org/ema-how-to-calculate/
+
 ### Main.py
 
 ### Util.py
