@@ -32,6 +32,7 @@ class ValueAnalyse:
 		return last_mean
 
 	def calculateEMA(last_price,number_of_period,last_EMA):
+		# Start by calculating k for the given timeframe. 2 / (22 + 1) = 0,0869
 		k = float(2)/(number_of_period+1)
 		return last_price * k + last_EMA *(1-k)
 
@@ -45,10 +46,16 @@ class ValueAnalyse:
 			ema=[]
 			print("column")
 			print(column)
-			for i in range(0, len(column)-24):
+			# over and over for each day that follows day 23 to get the full range of EMA
+			#for i in range(0, len(column)-24): ??????????
+			for i in range(0, len(column)-23):
+				# Add the closing prices for the first 22 days together and divide them by 22.
 				EMA_yesterday = column.iloc[1+j:22+j].mean()
 				k = float(2)/(22+1)
+				# getting the first EMA day by taking the following day’s (day 23) closing price multiplied by k, then multiply the previous day’s moving average by (1-k) and add the two.
 				ema.append(column.iloc[23 + j]*k+EMA_yesterday*(1-k))
+			print("ema")
+			print(ema)
 			mean_exp[j] = ema[-1]
 		return mean_exp
 
