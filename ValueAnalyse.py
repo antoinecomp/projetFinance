@@ -15,7 +15,11 @@ class ValueAnalyse:
 		self.values = [(each["BTC"].get("USD"), each["ETH"].get("USD"), each["DASH"].get("USD")) for each in json.loads(str(json_text))]
 		if(len(self.values)>=24):
 			self.bol = True
-			self.mean_exp = self.calculateAllEMA(self.values)
+			df = pd.DataFrame(self.values, columns=['BTC', 'ETH', 'DASH'])
+			# self.mean_exp = self.calculateAllEMA(self.values)
+			self.mean_exp = self.ewmas(df,24,False)
+			print("self.mean_exp")
+			print(self.mean_exp)
 		self.last_mean = self.calculateSMA(self.values)
 
 		self.fiveLast = np.array(self.values[-5:])
@@ -38,17 +42,16 @@ class ValueAnalyse:
 
 	def calculateAllEMA(self,values_array):
 		df = pd.DataFrame(values_array, columns=['BTC', 'ETH', 'DASH'])
-		# pour le moment on ne fait le calcul que pour une valeur : BTC
-		# comment le faire pour chaque colonne de values_array
-		# dfb = df['BTC']
 		column_by_search = ["BTC", "ETH", "DASH"]
-		for i,column in enumerate(column_by_search):
+		print(df)
+		for i,column in enumerate(df[column]):
 			ema=[]
-			print("column")
-			print(column)
 			# over and over for each day that follows day 23 to get the full range of EMA
 			#for i in range(0, len(column)-24): ??????????
-			for i in range(0, len(column)-23):
+			print("len(column)-24")
+			print(len(column)-24)
+			for j in range(0, len(column)-24):
+				print("IN THE LOOOOOOP")
 				# Add the closing prices for the first 22 days together and divide them by 22.
 				EMA_yesterday = column.iloc[1+j:22+j].mean()
 				k = float(2)/(22+1)
@@ -56,7 +59,7 @@ class ValueAnalyse:
 				ema.append(column.iloc[23 + j]*k+EMA_yesterday*(1-k))
 			print("ema")
 			print(ema)
-			mean_exp[j] = ema[-1]
+			mean_exp[i] = ema[-1]
 		return mean_exp
 
 	# quand le declenche t on ? Des le constructeur ou dans un main qui fait des appels reguliers ?
@@ -65,18 +68,55 @@ class ValueAnalyse:
 						['Action',"","",""]])
 		for i in range(1,len(self.lastValue)) :
 			#print("self.lastValue : ",self.lastValue)
+			print("self.mean_exp")
+			print(self.mean_exp)
 			if self.mean_exp:
 				print("self.mean_exp")
 				print("float(np.mean(self.fiveLast[0,i])) : ",float(np.mean(self.fiveLast[0,i])))
 				print("-------------")
 				print("moyenne : ", (float(np.mean(self.fiveLast[0,i]))))
 				print("moyenne exp : ",(float(self.mean_exp[1,i])))
-				if ((float(np.mean(self.fiveLast[0,i])) > (float(self.lastValue[i-1]))) and (float (self.mean_exp[1,i]) >float(self.lastValue[i-1]))):
-					results[1,i]="sell"
-				elif((float(self.fiveLast[1,i])< (float(self.lastValue[i-1]))) and (float(self.mean_exp[1,i])< float(self.lastValue[i-1]))):
-					results[1,i]="buy"
+				#if ((float(np.mean(self.fiveLast[0,i])) > (float(self.lastValue[i-1]))) and (float (self.mean_exp[1,i]) >float(self.lastValue[i-1]))):
+				#	results[1,i]="sell"
+				#elif((float(self.fiveLast[1,i])< (float(self.lastValue[i-1]))) and (float(self.mean_exp[1,i])< float(self.lastValue[i-1]))):
+				#	results[1,i]="buy"
 		return results
+
+	def ewmas(self,df, win, keepSource):
+		"""Add exponentially weighted moving averages for all columns in a dataframe.
+
+		Arguments: 
+		df -- pandas dataframe
+		win -- length of ewma estimation window
+		keepSource -- True or False for keep or drop source data in output dataframe
+
+		"""
+
+		df_temp = df.copy()
+		# Manage existing column names
+		colNames = list(df_temp.columns.values).copy()
+		removeNames = colNames.copy()
+
+		i = 0
+		for col in colNames:
+
+		    # Make new names for ewmas
+		    ewmaName = colNames[i] + '_ewma_' + str(win)   
+
+		    # Add ewmas
+		    df_temp[ewmaName] = pd.stats.moments.ewma(df[colNames[i]], span = win)
+		    i = i + 1
+
+		# Remove estimates with insufficient window length
+		df_temp = df_temp.ix[win:]
+
+		# Remove of keep source data
+		if keepSource == False:
+		    df_temp = df_temp.drop(removeNames,1)
+
+		return df_temp
 					
 					
 					
 #Moyenne exponentielle 
+# playback sex
