@@ -66,22 +66,20 @@ class ValueAnalyse:
 	def actionDecision(self):
 		results = np.array([["",'BTC','ETH','DASH'],
 						['Action',"","",""]])
-		for i in range(1,len(self.lastValue)) :
+		print("self.lastValue")
+		print(self.lastValue)
+		for i in range(0,len(self.lastValue)) :
 			#print("self.lastValue : ",self.lastValue)
-			print("self.mean_exp")
-			print(self.mean_exp)
-			if self.mean_exp:
-				print("self.mean_exp")
-				print("float(np.mean(self.fiveLast[0,i])) : ",float(np.mean(self.fiveLast[0,i])))
+			if(len(self.mean_exp) != 0):
 				print("-------------")
 				print("moyenne : ", (float(np.mean(self.fiveLast[0,i]))))
-				print("moyenne exp : ",(float(self.mean_exp[1,i])))
-				#if ((float(np.mean(self.fiveLast[0,i])) > (float(self.lastValue[i-1]))) and (float (self.mean_exp[1,i]) >float(self.lastValue[i-1]))):
-				#	results[1,i]="sell"
-				#elif((float(self.fiveLast[1,i])< (float(self.lastValue[i-1]))) and (float(self.mean_exp[1,i])< float(self.lastValue[i-1]))):
-				#	results[1,i]="buy"
+				print("moyenne exp : ",(float(self.mean_exp.iloc[1][i])))
+				if ((float(np.mean(self.fiveLast[0,i])) > (float(self.lastValue[i-1]))) and (float (self.mean_exp.iloc[1,i]) >float(self.lastValue[i-1]))):
+					results[1,i]="sell"
+				elif((float(self.fiveLast[1,i])< (float(self.lastValue[i-1]))) and (float(self.mean_exp.iloc[1,i])< float(self.lastValue[i-1]))):
+					results[1,i]="buy"
+		print("-------------")
 		return results
-
 	def ewmas(self,df, win, keepSource):
 		"""Add exponentially weighted moving averages for all columns in a dataframe.
 
