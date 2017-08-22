@@ -18,9 +18,16 @@ Then in your prefered web browser go to : http://localhost:9200/finance/crypto (
 
 ## TO-DO list
 
-- Verify why the ema array of calculateAllEMA function which calculate the exponential arithmetic mean of the stocks is empty. Maybe we should add conditions on it.
-- create an actionDecision function which verify SMA and EMA gives the same output or not to create an array of decision by stocks : buy or sell
-- modulate the stocks we can have with different API with as much stocks we can.
+- generate a message to a given number.
+- install it on a RaspberryPi
+- modulate the stocks we can have with different API with as much stocks as we can.
+- are microdeals profitable ? Shouldn't we create a margin ?
+
+### Machine Learning project :
+
+Sometimes the prediction will be wrong. How can the program learn it was wrong ?
+- each time we predict it will go up or down and the reverse appears, we should store a boolean value saying True/False...
+And ..?
 
 ## Files
 
