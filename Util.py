@@ -48,6 +48,8 @@ class Util:
 	
 		# on parcourt la deuxieme ligne
 		for i in range(1,len(results[1])):
+			k = 0
+			j = 0
 			if results[1][i] == "buy":
 				buyExist = True
 				# il me faut l'indice a acheter
