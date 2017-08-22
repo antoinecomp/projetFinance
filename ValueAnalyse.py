@@ -72,12 +72,19 @@ class ValueAnalyse:
 			#print("self.lastValue : ",self.lastValue)
 			if(len(self.mean_exp) != 0):
 				print("-------------")
-				print("moyenne : ", (float(np.mean(self.fiveLast[0,i]))))
-				print("moyenne exp : ",(float(self.mean_exp.iloc[1][i])))
-				if ((float(np.mean(self.fiveLast[0,i])) > (float(self.lastValue[i-1]))) and (float (self.mean_exp.iloc[1,i]) >float(self.lastValue[i-1]))):
-					results[1,i]="sell"
-				elif((float(self.fiveLast[1,i])< (float(self.lastValue[i-1]))) and (float(self.mean_exp.iloc[1,i])< float(self.lastValue[i-1]))):
-					results[1,i]="buy"
+				if ((float(np.mean(self.fiveLast[0,i])) > (float(self.lastValue[i]))) and (float (self.mean_exp.iloc[1,i]) >float(self.lastValue[i]))):
+					print("*****SELL******")
+					print("valeur teste : ",(float(self.lastValue[i])))
+					print("moyenne : ", (float(np.mean(self.fiveLast[0,i]))))
+					print("moyenne exp : ",(float(self.mean_exp.iloc[1][i])))
+					results[1,i+1]="sell"
+				elif((float(self.fiveLast[1,i])< (float(self.lastValue[i]))) and (float(self.mean_exp.iloc[1,i])< float(self.lastValue[i]))):
+					print("*****BUY******")
+					print("valeur teste : ",(float(self.lastValue[i])))
+					print("moyenne : ", (float(np.mean(self.fiveLast[0,i]))))
+					print("moyenne exp : ",(float(self.mean_exp.iloc[1][i])))
+					results[1,i+1]="buy"
+		print("results : ",results)
 		print("-------------")
 		return results
 	def ewmas(self,df, win, keepSource):
